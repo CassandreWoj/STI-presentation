@@ -93,37 +93,112 @@ adminMenu.addItem(“/menus/secure/ff457/addNewPortalUser2.jsp”,
 }
 ``````
 
+#### Direct Access to Methods
+
+utilise API - souvent exposé par interface Java. Possible quand côté serveur est déplacé dans une extension navigateur ....
 
 
-- #### Direct Access to Methods
 
 ### Identifier-Based Functions
 
+une fonction est utilisée pour avoir accès à une ressource spécifique, on utilise en général un identifiant de la ressource transmise au serveur dans un paramètre de requête URL ou dans un POST request. 
+
+*Par exemple : Le lien suivant permet d'afficher le document appartenant à un utilisateur (visible sur sa page uniquement) https://onPasseParUnGet.php/ViewDocument.php?docid=1280149120*. Ainsi tous les utilisateur se servant de ce lien peuvent l'afficher. 
+
+L'attaquant doit donc connaitre le chemin + l'ID. L'ID peut être généré aléatoirement ou avec GUID mais reste facilement trouvable. -> utilisation des journaux d'accès = mine d'or
+
+
+
 ### Multistage Functions
+
+Certains types de fonctions sont implémentés sur plusieurs étapes. Le contrôle d'accès s'effectue sur la première étape => on check s'il peut effectuer l'action mais si on bypass la première on peut effectuer l'action car on ne vérifie plus aux étapes d'après si on a le droit. = l'utilisateur lambda pourrait ajouter un compte admin et ainsi avoir contrôle total.
+
+*Par exemple : l'applications vérifie que le compte source sélectionné pour le transfert = utilisateur actuel, puis demande info sur le transfert (dest + montant). Si user intercepte la demande POST finale du process, il peut effectuer une attaque d'escalade de privilège horizontale et de transférer des fonds depuis un compte d'un autre utilisateur.*
+
+
 
 ### Static Files
 
+Lorsque les utilisateurs accèdent à des fonctionnalités et ressources protégées avec des requêtes vers des pages dynamiques, sur chaque page = contrôle accès approprié et confirmation des privilèges de l'utilisateur pour effectuer l'action.
+
+Souvent lorsqu'on utilise des ressources static => pas de contrôle d'accès qui vérifie les privilèges requis. Suffit connaître le schéma de l'URL.
+
+
+
 ### Platform Misconfiguration
+
+Utilisation du contrôles aux niveau serveur Web ou application platform layer pour le contrôle d'accès. Acccéder aux chemins (URL) spécifique est restreint en fonction du rôle de l'utilisateur dans l'appli. 
+
+Exemple : chemin /admin => uniquement pour user qui font parti du groupe administrateurs.
+
+Mais si erreur dans la configuration des contrôles => accès non autorisé. LLa configuration prend la forme de règles (similaire à un pare-feu) qui autorisent/refusent l'accès  à : `HTTP request method`, `URL path` et `User role`.
+
+Si on configure mal, on pourrait bloquer le POST au lieu d'autoriser uniquement celui là (qui est vérifié) et ainsi un attaquant peut passer par un GET (selon les API utilisé) et ainsi effectué une request alors qu'il n'y est pas autorisé de base.
+
+-> utilisation de HEAD
+
+***HEAD peut être pas mal pour une démo***
+
+
 
 ### Insecure Access Control Methods
 
-- Parameter-Based Access Control
-- Referer-Based Access Control
-- Location-Based Access Control
+##### Parameter-Based Access Control
+
+L'application détermine le rôle/niveau d'accès de l'utilisateur lors de sa connexion. Transmis via champ forme masquée/cookie ou param prédéfini. Utilise ce paramètre pour décidé l'accès ou non. 
+
+*Par exemple : un administrateur une fois co verra - https://wahh-app.com/login/home.jsp?admin=true alors qu'un utilisateur lambda verra - https://wahh-app.com/login/home.jsp*
+
+Tous les users qui connaissent le paramètre peuvent accéder à des fonctions admin.
+
+##### Referer-Based Access Control
+
+Utilisation de l'entête HTTP Referer comme base pour prendre les décisions de contrôle d'accès. 
+
+Par exemple : On vérifie que l'utilisateur a effectué une action depuis une page précise (page nécessite un "privilège requis" pour y avoir accès) et donc on ne vérifie pas que l'utilisateur ait vraiment les droits pour l'effectuer. Cassable car l'entête Referer est côté client = modifiable par l'utilisateur.
+
+##### Location-Based Access Control
+
+Bloque accès selon l'emplacement géographique de l'utilisateur. Par exemple avec IP. Contrôle facile à contourner car :
+
+- Utilisation proxy web basé sur l'emplacement requis
+
+- Utilisation d'un VPN 
+
+- Utilisation d'un appareil mobile prenant en charge le data roaming
+
+- Manipulation des mécanismes côté client pour la géolocalisation
+
+  
 
 ### Attacking Access Controls
 
-### Testing with Different User Accounts
+Hack steps
 
-### Testing Multistage Processes
+1. les fonctions application donnent-elles accès aux utilisateurs individuels un sous-ensemble de données ?
+2. Y a-t-il différents niveaux d'utilisateurs qui ont différentes fonctions? (Admin/lambda/gestionnaire/...)
+3. Les administrateurs utilisent-ils des fonctionnalités intégrées à la même application pour la configurer/la surveiller. 
+4. Quelles fonctions/ressources de données au sein de l'application avez-vous identifiées qui permettraient d'augmenter les privilèges actuels ?
+5. Existe-il des identifiants (param URL / POST) qui signalent qu'un paramètre est utilisé pour suivre le niveau d'accès.
 
-### Testing with Limited Access
+#### Testing with Different User Accounts
 
-### Testing Direct Access to Methods
+Tester efficacité avec plusieurs compte. On peut donc facilement voir si les ressources/fonctionnalités peuvent être accédées illégalement.
 
-### Testing Controls Over Static Resources
+Hack steps 
 
-### Testing Restrictions on HTTP Methods
+1. Utiliser compte avec le + de privilèges (pour déterminer toutes les fonctionnalités) puis prendre des comptes avec moins de droits pour verticcal privilege escalation.
+2. ..... tester si horizontal privilege escalation est possible ?
+
+#### Testing Multistage Processes
+
+#### Testing with Limited Access
+
+#### Testing Direct Access to Methods
+
+#### Testing Controls Over Static Resources
+
+#### Testing Restrictions on HTTP Methods
 
 - ### Securing Access Controls
 - ### A Multilayered Privilege Model
