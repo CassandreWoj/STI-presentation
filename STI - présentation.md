@@ -1,0 +1,113 @@
+# STI - Chapter 8 : Attacking Access Controls
+
+Qu'est-ce que les contrôles d'accès (access controls) ?
+
+Les contrôles d'accès sont des vérifications effectuées afin de restreindre les accès aux ressources selon les niveaux d'accréditation (vertical) et selon l'identité (horizontal) de l'utilisateur. 
+
+## Vulnérabilités communes
+
+// mettre en tableau
+
+- escalade de privilèges verticale -> devenir admin quand on est utilisateur lambda
+
+Utiliser des fonctions de l'application quand notre rôle ne le permet normalement pas.
+
+- escalade de privilèges horizontale-> accéder aux ressources d'autres utilisateurs au même niveau
+
+Accéder ou modifier des ressources auxquelles nous n'avons pas droit.
+
+- accès hors du flux d'exécution normal -> accéder à une page de paiement en ligne sans passer par l'étape de calcul des frais de port
+
+Sauter des étapes de vérification normalement obligatoires.
+
+### Fonctionnalités non-protégées
+
+- URL (/admin, p.ex.) : Accéder à l'URL d'administration permet l'accès à l'ensemble des fonctionnalités sans contrôle d'accès supplémentaire
+  - Le fait que l'URL ne soit pas affichée n'empêche pas l'attaquant d'y accéder, il va pouvoir la trouver autre part (essayer des URLs habituelles, outils de bruteforce, dans le code source, sur internet, ...)
+  - Le fait que l'URL d'accès soit "compliquée" ne va pas empêcher l'attaquant de la découvrir 
+- Les URLs peuvent être découvertes de diverses manières : 
+  - commentaires dans le code source,
+  - affichage à l'écran, 
+  - historique des navigateurs, favoris,
+  - envoi du lien par e-mail (ou autre outil),
+  - logs (clients, serveurs, proxys), 
+  - script de génération des menus.
+
+#### Accès direct à l'API
+
+L'API doit être sécurisée de la même manière que les pages standards de modification, car les mêmes risques s'appliquent. 
+
+Les fonctions d'administration de l'API doivent être sécurisées de la même manière que les pages admin et les fonctions pour les utilisateurs doivent être sécurisées de la même manière que les pages utilisateurs.
+
+### Fonctions basées sur les identifiants
+
+Lorsque certaines ressources sont accessibles grâce à des identifiants (IDs) et si les contrôles d'accès sont interrompus, un attaquant peut accéder aux ressources d'autres utilisateurs via ces IDs en essayant de les deviner. 
+
+Si ces IDs sont des UID ou GUID, la sécurité est un peu meilleure (on ne peut pas les deviner) mais ces identifiants ne peuvent être considérés comme secrets, l'application est donc tout de même vulnérable. 
+
+L'application fournit énormément de détails sur les identifiants pour d'autres fonctionnalités. 
+
+### Fonctions en plusieurs étapes
+
+Un bon exemple de processus en plusieurs étapes est le processus de paiement au sein d'une entreprise :
+
+- enregistrement de la facture,
+- sélection des comptes débiteurs,
+- mise à jour du stock,
+- validation du paiement.
+
+Si les contrôles d'accès ne sont pas renouvelés à chaque étape, il sera possible de ne pas respecter l'ordre du déroulement et d'effectuer les étapes 2, 3 et 4 sans passer par la 1 qui fait effectivement les vérifications. (-> bypass la première étape)
+
+En cas de paiement par exemple, il vaut mieux revérifier toutes les informations lors de la dernière étape, il ne suffit pas de transmettre en champs cachés les informations, car elles peuvent être interceptées et modifiées par un attaquant.
+
+### Fichiers statiques (== Fonctions basées sur les identifiants)
+
+Similaire aux accès à des fonctions basées sur les identifiants, simplement les fichiers auxquels on accède sont des fichiers statiques (pdf, rapports, binaires, ...). 
+
+### Mauvaise configuration de la plateforme
+
+Le contrôle d'accès peut être effectué avec Apache en prenant en compte la méthode de requête HTTP, l'URL et le rôle utilisateur. Seuls les utilisateurs du groupe admin ont accès aux URLs /admin pour les méthodes POST et GET. 
+
+Pour bypasser ces contrôles, on peut envoyer des requêtes avec des méthodes HTTP non-filtrées (HEAD ou personnalisé). Ces requêtes seront souvent interprétées comme légales au niveau de la plateforme mais traitées comme des requêtes GET au niveau de l'application.
+
+Méthode HEAD : elle doit retourner les mêmes en-têtes que la méthode GET mais sans le corps. Pour cela, la plupart des plateformes exécutent simplement la requête GET et retournent les en-têtes en supprimant le corps de la réponse.
+
+### Méthodes de contrôles d'accès non sécurisées
+
+#### Basés sur des paramètres
+
+L'information concernant l'utilisateur, le rôle ou le niveau d'accès est transmise via un cookie, un champ masqué ou un paramètre de la requête. Cela n'est pas sécurité car un attaquant peut modifier ces champs et usurper l'identité de l'administrateur. 
+
+#### Basés sur l'en-tête Referer
+
+Ce champ indique depuis quelle page web on accède à une ressource. Il est modifiable par l'utilisateur. Une vérification de flux basée sur l'en-tête Referer est facilement contournable par l'utilisateur. 
+
+#### Basés sur la géolocalisation
+
+Localiser l'adresse IP de l'utilisateur n'est pas suffisant pour déterminer s'il peut accéder à une ressource, il peut utiliser un VPN, un proxy web, un appareil avec données ou manipuler certains mécanismes implémentés du côté client pour modifier la localisation.
+
+## Attaque des contrôles d'accès
+
+### Avec différents comptes
+
+Cela permet d'identifier les URLs auxquelles on peut accéder avec différents types de comptes. Une fois les URLs identifiées, on peut essayer d'y accéder avec un compte moins privilégié. Grâce à cela, nous pouvons identifier les différences entre les comptes standards et les comptes privilégiés.
+
+Burp ou d'autres logiciels comparables peuvent permettre de cartographier un site et identifier toutes les fonctionnalités proposées. -> attaque horizontale
+
+Il ne faut pas compter uniquement sur l'outil pour repérer les contrôles d'accès vulnérables, il faut y appliquer nos connaissances pour déceler des vulnérabilités. 
+
+### Avec des processus en plusieurs étapes
+
+
+
+### Testing with Limited Access
+
+### Testing Direct Access to Methods
+
+### Testing Controls Over Static Resources
+
+### Testing Restrictions on HTTP Methods
+
+## Securing Access Controls
+
+### A Multilayered Privilege Model
