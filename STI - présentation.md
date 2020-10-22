@@ -98,16 +98,76 @@ Il ne faut pas compter uniquement sur l'outil pour repérer les contrôles d'acc
 
 ### Avec des processus en plusieurs étapes
 
+Lors de processus en plusieurs étapes, il faut contrôler chaque étape pour éviter qu'une étape soit vulnérable et qu'elle mette ainsi en péril la sécurité de tout le processus. Par exemple, un envoi de formulaire : il faut générer le formulaire, vérifier la manière dont il est complété, confirmer l'envoi et rediriger l'utilisateur. Chaque étape doit être vérifiée, chaque requête également. 
 
+### Avec un accès limité
 
-### Testing with Limited Access
+Dans une application, il est possible de trouver des fonctionnalités qui ne sont plus utilisées mais qui n'ont pas encore été supprimées ou des fonctionnalités qui ont été déployées mais pas encore publiées. 
 
-### Testing Direct Access to Methods
+Pour chaque fonctionnalité déjà trouvée, il faut vérifier si elle donne accès à un sous-ensemble de documents et qu'il n'est effectivement pas possible d'accéder à l'ensemble des documents du même type (via des identifiants, p-e).
 
-### Testing Controls Over Static Resources
+### Avec accès direct aux méthodes
 
-### Testing Restrictions on HTTP Methods
+Lorsqu'une application utilise des requêtes qui accèdent aux méthodes de l'API du côté serveur, on peut normalement identifier les vulnérabilités avec la méthodologie décrite précédemment. Cependant il faut tout de même chercher à identifier des APIs qui ne seraient pas correctement protégées, par exemple, en appelant des fonctions spécifiées par l'utilisateur sans vérifier qu'elles sont dans une whitelist. 
 
-## Securing Access Controls
+### A des ressources statiques
 
-### A Multilayered Privilege Model
+S'il est possible d'accéder à des ressources via des URLs, il faut essayer d'utiliser ces URLs directement avec un compte ne devant pas avoir de droits d'accès.
+
+### Via des restrictions sur les méthodes HTTP
+
+Pour toutes les requêtes identifiées, il faut essayer des les exécuter avec des en-têtes différents (GET, POST, HEAD, en-tête invalide) et si elles réussissent, il faut les réessayer avec utilisateur peu privilégié. 
+
+## Sécuriser les contrôles d'accès
+
+- Ne pas se baser sur l'ignorance des utilisateurs pour les URLs et les identifiants des documents
+- Ne pas faire confiance aux paramètres entrés par les utilisateurs
+- Ne pas faire confiance aux utilisateurs pour utiliser les fonctionnalités comme elles ont été prévues
+- Ne pas faire confiance aux utilisateurs pour ne pas détourner les données transmises par le côté client
+
+Les bonnes pratiques : 
+
+- Evaluer et documenter les contrôles d'accès pour chaque partie de l'application (pour les fonctionnalités et les ressources)
+- Toutes les décisions d'autorisation doivent être prises à partir de la session de l'utilisateur
+- Utiliser un composant central à l'application pour vérifier tous les contrôles d'accès
+- Utiliser ce composant central pour valider toutes les requêtes client
+- Utiliser des techniques de programmation pour forcer le contrôle d'accès à être effectué et éviter que le développeur passe outre
+- Pour les parties sensibles de l'application, effectuer des contrôles supplémentaires, par exemple basés sur l'adresse IP
+- Accès à des fichiers statiques : 
+  - Accès indirect en passant un nom de fichier à une page dynamique côté serveur qui va implémenter un contrôle d'accès et retourner le fichier (pas rediriger dessus, car cela ne mettrait en place aucun contrôle)
+  - Utiliser l'authentification HTTP et d'autres fonctionnalités du serveur d'application pour contrôler l'authentification (cela risque de faire une vérification différente de celle du composant central, il faut donc s'assurer que cela soit consistant)
+- Il ne faut faire confiance qu'aux données provenant du côté serveur, et non du côté client. Il faut revalider les identifiants à chaque transmission de données
+- Pour des actions critiques, il faut ré-authentifier l'utilisateur à chaque transaction et utiliser un système d'authentification multi-facteurs
+- Logger toutes les actions effectuées quand des données sensibles sont concernées
+
+Bénéfices d'utiliser un composant central à l'application : 
+
+- plus grande clarté des contrôles d'accès
+- meilleure maintenabilité (plus efficace et sûr)
+- plus adaptable
+- moins d'erreurs et d'omissions
+
+### Modèle à privilèges en multi-tiers
+
+Dans le cas d'une application multi-tiers, une bonne approche serait de mettre des contrôles d'accès à chaque niveau. Si les contrôles d'accès d'une couche sont compromis, ceux des autres couches offrent toujours une protection et l'attaquant ne pourra pas aller au bout. En plus de cela : 
+
+- Le serveur de l'application peut contrôler les URLs selon le rôle de l'utilisateur
+- L'application peut utiliser un compte de base de données séparés avec des privilèges limités pour chaque type d'utilisateur (privilèges en lecture-seule) et spécifier précisément quelles tables sont accessibles
+- Utiliser un compte système avec des privilèges limités pour chaque composant
+
+// tableau -> matrice de droits
+
+Concepts de contrôles d'accès :
+
+- Via des techniques de programmation
+  - une matrice de droits est stockée dans la base de données 
+  - le programme se charge d'appliquer les contrôles (avec un algorithme aussi complexe que nécessaire)
+- A la discrétion de l'administrateur (discretionary access control DAC)
+  - l'administrateur peut donner explicitement des privilèges à d'autres utilisateurs pour des ressources auxquelles ils ont accès
+  - modèle fermé : white list
+  - modèle ouvert : black list
+- Basés sur des rôles (role-based access control RBAC)
+  - chaque rôle donne accès à certains privilèges, pas trop de rôles, ni trop peu, il faut que cela reste gérable et sécurisé
+- Via un composant externe
+  - utilisation d'un compte de base de données différents pour les groupes d'utilisateurs afin de limiter leurs droits
+
