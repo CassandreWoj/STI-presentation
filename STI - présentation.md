@@ -12,7 +12,7 @@ Les contrôles d'accès sont des vérifications effectuées afin de restreindre 
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Verticale<br /><br />Utiliser des fonctions de l'application quand notre rôle ne le permet normalement pas | Escalade de privilèges verticale - *vertical privilege esalation*<br /><br />Ex : devenir administrateur quand on est un utilisateur lambda |
 | Horizontale<br /><br />Accéder aux ressources d'autres utilisateurs du même niveau | Escalade de privilèges horizontale -*horizontal privilege esalation*<br /><br />Ex : un utilisateur lambda peut lire les emails d'un autre utilisateur lambda |
-| Context-dependent<br /><br /> L'accès des utilisateurs est limitée à ce qui est autorisée selon l'état actuel de l'application | Accès hors du flux d'exécution normal - *business logi exploitation*<br /><br />Ex : Accéder à une page de paiement en ligne sans passer par l'étape de calcul des frais de port. <br />Sauter des étapes de vérification normalement obligatoires. |
+| Context-dependent<br /><br /> L'accès des utilisateurs est limitée à ce qui est autorisée selon l'état actuel de l'application | Accès hors du flux d'exécution normal - *business logic exploitation*<br /><br />Ex : Accéder à une page de paiement en ligne sans passer par l'étape de calcul des frais de port. <br />Sauter des étapes de vérification normalement obligatoires. |
 
 - escalade de privilèges verticale -> devenir admin quand on est utilisateur lambda
 
