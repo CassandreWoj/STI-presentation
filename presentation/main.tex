@@ -1,0 +1,423 @@
+\documentclass{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[french]{babel}
+
+\usetheme{Madrid}
+%\usetheme{Berlin}
+%\usetheme{Antibes}
+%\usetheme{Ilmenau}
+%\usetheme{Luebeck}
+%%%\usetheme{AnnArbor}
+%\usetheme{Dresden}
+%\useinnertheme{rectangles}
+%\useoutertheme{infolines}
+
+\title{Attaque des contrôle d'accès}
+\subtitle{Présentation de STI}
+%\author[C.W., G.D. et G.R.]{Cassandre Wojciechowski \\ Gwendoline Dössegger \\ Gabriel Roch}
+\author[Wojciechowski, Dössegger et Roch]{Cassandre Wojciechowski \\ Gwendoline Dössegger \\ Gabriel Roch}
+\date{20 novembre 2020}
+\institute[HEIG]{Haute Écolde d'Ingénierie et de Gestion du Canton de Vaud}
+
+ \AtBeginSection[]
+ {
+   \begin{frame}
+     \frametitle{Table de matière}
+     \tableofcontents[currentsection,sectionstyle=show/shaded,subsectionstyle=show/show/hide]
+   \end{frame}
+ }
+% \AtBeginSubsection[]
+% {
+%   \begin{frame}
+%     \frametitle{Table of Contents}
+%     \tableofcontents[currentsection,currentsubsection]
+%   \end{frame}
+% }
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Table de matière}
+  \tableofcontents[subsectionstyle=hide,subsubsectionstyle=hide]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Qu'est-ce que les contrôles d'accès (access controls) ?}
+  \begin{itemize}
+    \item Vérification du niveau d'accréditation (vertical)
+    \item Vérification de l'identité de l'utilisateur (horizontal)
+    \item Restreind l'accès en fonctions des vérification ci-dessus
+  \end{itemize}
+%   Les contrôles d'accès sont des vérifications effectuées afin de restreindre les accès aux ressources selon les niveaux d'accréditation (vertical) et selon l'identité (horizontal) de l'utilisateur. 
+\end{frame}
+
+\section{Vulnérabilités communes} 
+
+\begin{frame}
+  \frametitle{Vulnérabilités communes}
+  \begin{itemize}
+    \item Vulnérabilités verticale
+    \item Vulnérabilités horizontale
+    \item Vulnérabilités dépendant du contexte
+  \end{itemize}
+\end{frame}
+\begin{frame}
+  \frametitle{Vulnérabilités verticale}
+  \begin{enumerate}
+    \item[Vulnérabilité] Utiliser des fonctions de l'application quand notre rôle ne le permet normalement pas.
+    \item[Type d'attaque] Escalade de privilèges verticale --- \emph{vertical privilege esalation}
+  \end{enumerate}
+  \begin{block}{Exemple d'attaque}
+    Devenir administrateur quand on est un utilisateur lambda.
+  \end{block}
+  \begin{center}
+    \includegraphics[height=10em]{escalade-vert}
+  \end{center}
+\end{frame}
+\begin{frame}
+  \frametitle{Vulnérabilités horizontale}
+  \begin{enumerate}
+    \item[Vulnérabilité] Accéder aux ressources d'autres utilisateurs du même niveau.
+    \item[Type d'attaque] Escalade de privilèges horizontale --- \emph{horizontal privilege esalation}
+  \end{enumerate}
+  \begin{block}{Exemple d'attaque}
+    Un utilisateur lambda peut lire les emails d'un autre utilisateur lambda
+  \end{block}
+  \begin{center}
+    \includegraphics[height=10em]{escalade-hor}
+  \end{center}
+\end{frame}
+\begin{frame}
+  \frametitle{Vulnérabilités dépendant du contexte}
+  \begin{enumerate}
+    \item[Vulnérabilité] L'accès des utilisateurs est limitée à ce qui est autorisée selon l'état actuel de l'application
+    \item[Type d'attaque] Accès hors du flux d'exécution normal --- \emph{business logic exploitation}
+  \end{enumerate}
+  \begin{block}{Exemple d'attaque}
+    Accéder à une page de paiement en ligne sans passer par l'étape de calcul des frais de port.\\
+    Sauter des étapes de vérification normalement obligatoires.
+  \end{block}
+  \begin{center}
+    \includegraphics[height=8em]{escalade-hors-flux}
+  \end{center}
+\end{frame}
+
+
+
+\subsection{Fonctionnalités non-protégées}
+
+\begin{frame}
+  \frametitle{Contrôle d'accès par connaissance d'URL}
+  \begin{itemize}
+    \item Certain site masque l'URL de la page d'admin pour les utilisateurs
+    \item Le contrôle d'accès n'est pas toujours fait sur les pages d'admin
+  \end{itemize}
+  \begin{block}{L'URL n'est pas secret}
+    Le fait que l'URL ne soit pas affichée n'empêche pas l'attaquant d'y accéder, il va pouvoir la trouver autre part (essayer des URLs habituelles, outils de bruteforce, dans le code source, sur internet, ...)
+    
+    D'autre moyen peuvent également être utiliser car une URL n'est jamais traitée comme confidentiel par les logiciels et serveurs.
+  \end{block}
+  \begin{exampleblock}{Sécurisation}
+    \begin{itemize}
+      \item Ne pas se baser sur l'ignorance des utilisateurs pour les URLs et les identifiants des documents
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Découvrir une URL d'administration}
+  \begin{itemize}
+    \item commentaires dans le code source,
+    \item affichage à l'écran, 
+    \item historique des navigateurs, favoris,
+    \item envoi du lien par e-mail (ou autre outil) par certain utilisateur,
+    \item logs (clients, serveurs, proxys), 
+    \item script de génération des menus.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Accès direct à l'API}
+  Sur certain site, les API ne font pas les mêmes contrôles d'accès que pour les pages "standards"
+  \vspace{2em}
+  \begin{itemize}
+    \item L'API doit être sécurisée de la même manière que les pages standards de modification, car les mêmes risques s'appliquent.
+    \item Les fonctions d'administration de l'API permettent souvant les mêmes accès que les pages d'administrations.
+  \end{itemize}
+\end{frame}
+
+\subsection{Contrôle basées sur les identifiants}
+\begin{frame}
+  \frametitle{Contrôle basées sur les identifiants}
+  \label{fram:vuln-fn-id-based}
+  Certains sites permettent l'accès à des fonctionnalités en fonction de l'ID d'une ressource.
+  \begin{itemize}
+    \item Les IDs peuvent être deviné.
+    \item Les GUID n'améliore que peu la sécurité (prévisible).
+    \item Les ID peuvent être affiché ailleurs.
+  \end{itemize}
+  \begin{block}{Exemple}
+    Ce lien (\url{https://example.com/DeleteDoc.php?id=1280149120}) permet de supprimer un document (visible uniquement par le propriétaire). Ainsi tous les utilisateur se servant de ce lien (ou le devinant) peuvent le supprimer.
+  \end{block}
+\end{frame}
+
+\subsection{Fonctions en plusieurs étapes}
+
+
+\begin{frame}
+  \frametitle{Fonctions en plusieurs étapes}
+  \begin{block}{Exemple de réception de matériel}
+    \begin{enumerate}
+        \item enregistrement de la facture,
+        \item sélection des comptes débiteurs,
+        \item mise à jour du stock,
+        \item validation du paiement.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+\begin{frame}
+  \frametitle{Fonctions en plusieurs étapes}
+%  \framesubtitle{Attaque}
+  
+  \begin{itemize}
+    \item Contrôles d'accès à chaque étape.
+    \item Vérification de toutes les étapes précedente à chaque fois.
+  \end{itemize}
+  \vspace{2em}
+  \begin{alertblock}{Risque}
+    \begin{itemize}
+      \item Validation finale par un attaquant
+      \item Bypass d'une étape
+    \end{itemize}
+  \end{alertblock}
+  \begin{exampleblock}{Sécurisation}
+    \begin{itemize}
+      \item Ne pas faire confiance aux utilisateurs pour utiliser les fonctionnalités comme elles ont été prévues
+    \end{itemize}
+  \end{exampleblock}
+  
+  %En cas de paiement par exemple, il vaut mieux revérifier toutes les informations lors de la dernière étape, il ne suffit pas de transmettre en champs cachés les informations, car elles peuvent être interceptées et modifiées par un attaquant.
+\end{frame}
+
+\subsection{Fichiers statiques}
+\begin{frame}
+  \frametitle{Fichiers statiques}
+  \begin{itemize}
+    \item Même risque que pour les fonctions basées sur des identifiants (slide~\ref{fram:vuln-fn-id-based}).
+    \item Contrôle d'accès souvant effectué par une autre application (par ex. apache)
+    %\item Similaire aux accès à des fonctions basées sur les identifiants, simplement les fichiers auxquels on accède sont des fichiers statiques (pdf, rapports, binaires, ...).
+  \end{itemize}
+\end{frame}
+
+\subsection{Mauvaise configuration de la plateforme}
+\begin{frame}
+  \frametitle{Mauvaise configuration de la plateforme}
+  \begin{itemize}
+    \item Les contrôles d'accès peuvent ne pas être effectués par l'application mais par l'infrastructure (par ex. apache)
+    \item Apache peut validé une requête avec les critères suivantes
+    \begin{itemize}
+      \item L'URL demandée (/admin, /image, ...)
+      \item La méthode HTTP utilisée (GET, POST, ...)
+      \item Les identenfiants de l'utilsateur
+      \item Les cookies (admin=true)
+    \end{itemize}
+  \end{itemize}
+  \begin{block}{Methode HTTP particulière}
+    Une requête HEAD doit renvoyer les mêmes en-têtes que GET, mais sans le corps du message. Pour cela, les mêmes scripts que pour GET sont généralement executé.
+  \end{block}
+  \begin{block}{Methode HTTP non-standard}
+    Les requêtes HTTP non-standard (DELETE, TOTO, ...) peuvent également être traité par les mêmes scripts.
+  \end{block}
+\end{frame}
+
+\subsection{Méthodes de contrôles d'accès non sécurisées}
+
+\begin{frame}
+  \frametitle{Contrôles d'accès basés sur des paramètres}
+  L'information concernant le rôle ou le niveau d'accès de l'utilisateur est transmis par :
+  \begin{itemize}
+    \item des cookies
+    \item un champ masqué dans le formulaire
+    \item un paramètre de la requête
+    \item une information dans l'url
+  \end{itemize}
+  Ces techniques ne sont pas sécurisé car un attaquant peut modifier ces champs et usurper l'identité de l'administrateur.
+  \begin{alertblock}{Sécurisation}
+    Ne pas faire confiance aux paramètres envoyés par les utilisateurs
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Contrôles d'accès basés sur l'en-tête Referer}
+  Cette en-tête HTTP indique depuis quelle page web on accède à une ressource.
+  \vspace{2em}
+  
+  Il est modifiable par l'utilisateur.
+  \vspace{2em}
+  
+  Une vérification de flux basée sur l'en-tête Referer n'est pas sûre. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Contrôles d'accès basés sur la géolocalisation}
+  Un utilisateur peut modifier sa géolocalisation percue par le serveur.
+  \begin{itemize}
+    \item VPN
+    \item Proxy web
+    \item En-tête HTTP X-Forwarded-For
+%    \item Connexion externe à l'entreprise
+  \end{itemize}
+\end{frame}
+
+\section{Attaque des contrôles d'accès}
+\subsection{Avec différents comptes}
+
+\begin{frame}
+  \frametitle{Comparé différents comptes}
+  \begin{itemize}
+    \item Tester les URLs obtenues à partir d'un compte privilégié avec un compte moins privilégié.
+%    \item Cela permet d'identifier les URLs auxquelles on peut accéder avec différents types de comptes. Une fois les URLs identifiées, on peut essayer d'y accéder avec un compte moins privilégié. Grâce à cela, nous pouvons identifier les différences entre les comptes standards et les comptes privilégiés.
+    \item Cartographier le site avec un logiciel comme Burp, pour détecter de URL non-affichée.
+    \item Il faut ajouter nos connaissances à celle de l'outils en cas d'attaque sur un logiciel spécialisé.
+  \end{itemize}
+\end{frame}
+
+\subsection{Sur un processus en plusieurs étapes}
+
+\begin{frame}
+  \frametitle{Sur un processus en plusieurs étapes}
+  Contrôler que chaque étape du processus ne soit pas vulnérable : 
+  \vspace{2em}
+  \begin{itemize}
+    \item chaque étape vérifie les droits de l'utilisateur
+    \item l'ordre des actions soit bien contrôlé
+  \end{itemize}
+\end{frame}
+
+\subsection{Avec un accès limité}
+\begin{frame}
+  \frametitle{Avec un accès limité (sans compte privilégié)}
+  Vérifier la présence
+  \begin{itemize}
+    \item Fonctionnalité associée à d'autre fonctionnalité déjà connue (par ex. DELETE, alors que le SHOW est connu)
+    \item Fonctionnalité plus utilisé, mais encore présent
+    \item Fonctionnalité déployée, mais encore utilisé
+  \end{itemize}
+\end{frame}
+
+\subsection{Avec accès direct aux méthodes}
+\begin{frame}
+  \frametitle{Avec accès direct aux méthodes (API)}
+  Vérifier niveau de protection de l'API utilisé.
+  
+  On peut considéré une API de la même manière que le site, et réutilisé la même méthodologie.
+\end{frame}
+
+\subsection{À des ressources statiques}
+\begin{frame}
+  \frametitle{À des ressources statiques}
+  S'il est possible d'accéder à des ressources via des URLs, il faut essayer d'utiliser ces URLs directement avec un compte ne devant pas avoir de droits d'accès.
+\end{frame}
+
+\subsection{Via des restrictions sur les méthodes HTTP}
+\begin{frame}
+  \frametitle{Via des restrictions sur les méthodes HTTP}
+  Pour toutes les requêtes identifiées, il faut essayer des les exécuter avec des en-têtes différents (GET, POST, HEAD, en-tête invalide) et si elles réussissent, il faut les réessayer avec utilisateur peu privilégié. 
+\end{frame}
+
+
+% ======================================================================
+\section{Sécuriser les contrôles d'accès}
+\begin{frame}
+  \frametitle{Sécuriser les contrôles d'accès}
+  \begin{itemize}
+    \item 
+    \item 
+    \item Ne pas faire confiance aux utilisateurs pour utiliser les fonctionnalités comme elles ont été prévues
+    \item Ne pas faire confiance aux utilisateurs pour ne pas détourner les données transmises par le côté client
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sécuriser les contrôles d'accès}
+  \framesubtitle{Les bonnes pratiques}
+  \begin{itemize}
+    \item Evaluer et documenter les contrôles d'accès pour chaque partie de l'application (pour les fonctionnalités et les ressources)
+    \item Toutes les décisions d'autorisation doivent être prises à partir de la session de l'utilisateur
+    \item Utiliser un composant central à l'application pour vérifier tous les contrôles d'accès
+    \item Utiliser ce composant central pour valider toutes les requêtes client
+    \item Utiliser des techniques de programmation pour forcer le contrôle d'accès à être effectué et éviter que le développeur passe outre
+    \item Pour les parties sensibles de l'application, effectuer des contrôles supplémentaires, par exemple basés sur l'adresse IP
+    \item Accès à des fichiers statiques : 
+    \begin{itemize}
+      \item - Accès indirect en passant un nom de fichier à une page dynamique côté serveur qui va implémenter un contrôle d'accès et retourner le fichier (pas rediriger dessus, car cela ne mettrait en place aucun contrôle)
+      \item - Utiliser l'authentification HTTP et d'autres fonctionnalités du serveur d'application pour contrôler l'authentification (cela risque de faire une vérification différente de celle du composant central, il faut donc s'assurer que cela soit consistant)
+    \end{itemize}
+    \item Il ne faut faire confiance qu'aux données provenant du côté serveur, et non du côté client. Il faut revalider les identifiants à chaque transmission de données
+    \item Pour des actions critiques, il faut ré-authentifier l'utilisateur à chaque transaction et utiliser un système d'authentification multi-facteurs
+    \item Logger toutes les actions effectuées quand des données sensibles sont concernées
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sécuriser les contrôles d'accès}
+  \framesubtitle{Bénéfices d'utiliser un composant central à l'application}
+  \begin{itemize}
+    \item plus grande clarté des contrôles d'accès
+    \item meilleure maintenabilité (plus efficace et sûr)
+    \item plus adaptable
+    \item moins d'erreurs et d'omissions
+  \end{itemize}
+\end{frame}
+
+\subsection{Modèle à privilèges en multi-tiers}
+\begin{frame}
+  \frametitle{Modèle à privilèges en multi-tiers}
+  Dans le cas d'une application multi-tiers, une bonne approche serait de mettre des contrôles d'accès à chaque niveau. Si les contrôles d'accès d'une couche sont compromis, ceux des autres couches offrent toujours une protection et l'attaquant ne pourra pas aller au bout. En plus de cela 
+  \begin{itemize}
+    \item Le serveur de l'application peut contrôler les URLs selon le rôle de l'utilisateur
+    \item L'application peut utiliser un compte de base de données séparés avec des privilèges limités pour chaque type d'utilisateur (privilèges en lecture-seule) et spécifier précisément quelles tables sont accessibles
+    \item Utiliser un compte système avec des privilèges limités pour chaque composant
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  tableau -> matrice de droits
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modèle à privilèges en multi-tiers}
+  \framesubtitle{Concepts de contrôles d'accès}
+  \begin{itemize}
+    \item Via des techniques de programmation
+    \begin{itemize}
+      \item une matrice de droits est stockée dans la base de données 
+      \item le programme se charge d'appliquer les contrôles (avec un algorithme aussi complexe que nécessaire)
+    \end{itemize}
+    \item A la discrétion de l'administrateur (discretionary access control DAC)
+    \begin{itemize}
+      \item l'administrateur peut donner explicitement des privilèges à d'autres utilisateurs pour des ressources auxquelles ils ont accès
+      \item modèle fermé : white list
+      \item modèle ouvert : black list
+    \end{itemize}
+    \item Basés sur des rôles (role-based access control RBAC)
+    \begin{itemize}
+      \item chaque rôle donne accès à certains privilèges, pas trop de rôles, ni trop peu, il faut que cela reste gérable et sécurisé
+    \end{itemize}
+    \item Via un composant externe
+    \begin{itemize}
+      \item utilisation d'un compte de base de données différents pour les groupes d'utilisateurs afin de limiter leurs droits
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+
+\end{document}
