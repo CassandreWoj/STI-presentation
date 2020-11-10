@@ -9,3 +9,5 @@
 *.synctex.gz
 *.toc
 *.tex~
+
+presentation/main-*.jpg
