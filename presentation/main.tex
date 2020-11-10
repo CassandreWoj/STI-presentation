@@ -1,30 +1,37 @@
-\documentclass{beamer}
+\documentclass[aspectratio=169]{beamer}  % avec animation
+%\documentclass[aspectratio=169,handout]{beamer}  % sans animation
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage[french]{babel}
+%\usepackage{appendixnumberbeamer}
 
-\usetheme{Madrid}
+%\usetheme{Madrid}
 %\usetheme{Berlin}
 %\usetheme{Antibes}
 %\usetheme{Ilmenau}
-%\usetheme{Luebeck}
+\usetheme{Luebeck}
 %%%\usetheme{AnnArbor}
 %\usetheme{Dresden}
 %\useinnertheme{rectangles}
-%\useoutertheme{infolines}
+\useinnertheme{rounded}
+\useoutertheme{infolines}
+
+\beamertemplatenavigationsymbolsempty
 
 \title{Attaque des contrôles d'accès}
 \subtitle{Présentation de STI}
-%\author[C.W., G.D. et G.R.]{Cassandre Wojciechowski \\ Gwendoline Dössegger \\ Gabriel Roch}
-\author[Wojciechowski, Dössegger et Roch]{Cassandre Wojciechowski \\ Gwendoline Dössegger \\ Gabriel Roch}
+\author[Wojciechowski, Dössegger et Roch]{Cassandre Wojciechowski \and Gwendoline Dössegger \and Gabriel Roch}
 \date{20 novembre 2020}
 \institute[HEIG]{Haute École d'Ingénierie et de Gestion du Canton de Vaud}
 
  \AtBeginSection[]
  {
-   \begin{frame}
-     \frametitle{Table des matières}
+   \begin{frame}[noframenumbering]
+     \sectionpage
+   \end{frame}
+   \begin{frame}[noframenumbering]
+     \frametitle{Sommaire}
      \tableofcontents[currentsection,sectionstyle=show/shaded,subsectionstyle=show/show/hide]
    \end{frame}
  }
@@ -36,15 +43,35 @@
 %   \end{frame}
 % }
 
+\newcommand{\demo}{
+\begin{frame}[noframenumbering]
+  \begin{center}
+    \Huge Demo
+  \end{center}
+\end{frame}}
+
 \begin{document}
 
-\begin{frame}[plain]
+\begin{frame}[plain,noframenumbering]
   \titlepage
 \end{frame}
 
-\begin{frame}
-  \frametitle{Table des matières}
-  \tableofcontents[subsectionstyle=hide,subsubsectionstyle=hide]
+\begin{frame}[noframenumbering]
+  \frametitle{Sommaire}
+  \begin{columns}[c]
+    \column{.45\textwidth}
+      \tableofcontents[subsectionstyle=hide]
+    \column{.45\textwidth}
+      \begin{block}{Exemple ou note}
+        \vspace{1em}
+      \end{block}
+      \begin{alertblock}{Attaque}
+        \vspace{1em}
+      \end{alertblock}
+      \begin{exampleblock}{Sécurisation}
+        \vspace{1em}
+      \end{exampleblock}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -57,7 +84,8 @@
 %   Les contrôles d'accès sont des vérifications effectuées afin de restreindre les accès aux ressources selon les niveaux d'accréditation (vertical) et selon l'identité (horizontal) de l'utilisateur. 
 \end{frame}
 
-\section{Vulnérabilités communes} 
+\section{Vulnérabilités communes}
+\subsection*{Introduction}
 
 \begin{frame}
   \frametitle{Vulnérabilités communes}
@@ -69,42 +97,55 @@
 \end{frame}
 \begin{frame}
   \frametitle{Vulnérabilités verticales}
-  \begin{enumerate}
-    \item[Vulnérabilité] Utiliser des fonctions de l'application quand notre rôle ne le permet normalement pas.
-    \item[Type d'attaque] Escalade de privilèges verticale --- \emph{vertical privilege esalation}
-  \end{enumerate}
-  \begin{block}{Exemple d'attaque}
-    Devenir administrateur quand on est un utilisateur lambda.
-  \end{block}
-  \begin{center}
-    \includegraphics[height=10em]{escalade-vert}
-  \end{center}
+  \begin{columns}[c]
+    \column{.45\textwidth}
+      \begin{description}
+        \item[Vulnérabilité] \hfill \\ Utiliser des fonctions de l'application quand notre rôle ne le permet normalement pas.
+        \item[Type d'attaque] \hfill \\ Escalade de privilèges verticale --- \emph{vertical privilege esalation}
+      \end{description}
+      \begin{block}{Exemple d'attaque}
+        Devenir administrateur quand on est un utilisateur lambda.
+      \end{block}
+    \column{.45\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{escalade-vert}
+      \end{center}
+  \end{columns}
 \end{frame}
 \begin{frame}
   \frametitle{Vulnérabilités horizontales}
-  \begin{enumerate}
-    \item[Vulnérabilité] Accéder aux ressources d'autres utilisateurs du même niveau.
-    \item[Type d'attaque] Escalade de privilèges horizontale --- \emph{horizontal privilege esalation}
-  \end{enumerate}
-  \begin{block}{Exemple d'attaque}
-    Un utilisateur lambda peut lire les emails d'un autre utilisateur lambda
-  \end{block}
-  \begin{center}
-    \includegraphics[height=10em]{escalade-hor}
-  \end{center}
+  \begin{columns}[c]
+    \column{.45\textwidth}
+      \begin{description}
+        \item[Vulnérabilité] \hfill \\ Accéder aux ressources d'autres utilisateurs du même niveau.
+        \item[Type d'attaque] \hfill \\ Escalade de privilèges horizontale --- \emph{horizontal privilege esalation}
+      \end{description}
+      \begin{block}{Exemple d'attaque}
+        Un utilisateur lambda peut lire les emails d'un autre utilisateur lambda
+      \end{block}
+    \column{.45\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{escalade-hor}
+      \end{center} 
+  \end{columns}
 \end{frame}
 \begin{frame}
   \frametitle{Vulnérabilités dépendant du contexte}
-  \begin{enumerate}
-    \item[Vulnérabilité] L'accès des utilisateurs est limité à ce qui est autorisé selon l'état actuel de l'application
-    \item[Type d'attaque] Accès hors du flux d'exécution normal --- \emph{business logic exploitation}
-  \end{enumerate}
-  \begin{block}{Exemple d'attaque}
-    Accéder à une page de paiement en ligne sans passer par l'étape de calcul des frais de port.\\
-    Sauter des étapes de vérification normalement obligatoires.
-  \end{block}
+  \begin{columns}[c]
+    \column{.45\textwidth}
+      \begin{description}
+        \item[Vulnérabilité] \hfill \\ Le contrôle d'accès ne prend pas en compte l'état actuel de l'application
+        %L'accès des utilisateurs est limité à ce qui est autorisé selon l'état actuel de l'application
+        \item[Type d'attaque] \hfill \\ Accès hors du flux d'exécution normal --- \emph{business logic exploitation}
+      \end{description}
+    \column{.45\textwidth}
+      \begin{block}{Exemple d'attaque}
+        Accéder à une page de paiement en ligne sans passer par l'étape de calcul des frais de port.\\
+        Sauter des étapes de vérification normalement obligatoires.
+      \end{block}
+  \end{columns}
   \begin{center}
-    \includegraphics[height=8em]{escalade-hors-flux}
+    \includegraphics[width=22em]{escalade-hors-flux}
   \end{center}
 \end{frame}
 
@@ -114,20 +155,24 @@
 
 \begin{frame}
   \frametitle{Contrôles d'accès par connaissance d'URL}
-  \begin{itemize}
-    \item Certains sites masquent l'URL de la page d'admin pour les utilisateurs
-    \item Le contrôle d'accès n'est pas toujours fait sur les pages d'admin
-  \end{itemize}
-  \begin{block}{L'URL n'est pas secret}
-    Le fait que l'URL ne soit pas affichée n'empêche pas l'attaquant d'y accéder, il va pouvoir la trouver autre part (essayer des URLs habituelles, outils de bruteforce, dans le code source, sur internet, ...)
-    
-    D'autres moyens peuvent également être utilisés car une URL n'est jamais traitée comme confidentielle par les logiciels et serveurs.
-  \end{block}
-  \begin{exampleblock}{Sécurisation}
-    \begin{itemize}
-      \item Ne pas se baser sur l'ignorance des utilisateurs pour les URLs et les identifiants des documents
-    \end{itemize}
-  \end{exampleblock}
+  \begin{columns}[c]
+    \column{.45\textwidth}
+      \begin{itemize}[<1->]
+        \item Certains sites masquent l'URL de la page d'admin pour les utilisateurs
+        \item Le contrôle d'accès n'est pas toujours fait sur les pages d'admin
+      \end{itemize}
+      \begin{exampleblock}{Sécurisation}<3->
+        \begin{itemize}
+          \item Ne pas se baser sur l'ignorance des utilisateurs pour les URLs et les identifiants des documents
+        \end{itemize}
+      \end{exampleblock}
+    \column{.45\textwidth}
+      \begin{block}{L'URL n'est pas secret}<2->
+        Le fait que l'URL ne soit pas affichée n'empêche pas l'attaquant d'y accéder, il va pouvoir la trouver autre part (essayer des URLs habituelles, outils de bruteforce, dans le code source, sur internet, ...)
+        
+        D'autres moyens peuvent également être utilisés car une URL n'est jamais traitée comme confidentielle par les logiciels et serveurs.
+      \end{block}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -143,30 +188,37 @@
     \end{itemize}
   \end{alertblock}
 \end{frame}
+
+\demo
   
 \subsection{API}
 \begin{frame}
   \frametitle{Accès direct à l'API}
   Sur certains sites, les API ne font pas les mêmes contrôles d'accès que pour les pages "standards"
-  \begin{alertblock}{Attaque}
-    \begin{itemize}
-      \item Analyse des requêtes faites par le navigateur
-      \item Test des URLs standards
-      \item Test les ressources devinables
-    \end{itemize}
-  \end{alertblock}
-  \begin{exampleblock}{Sécurisation}
-    \begin{itemize}
-      \item L'API doit être sécurisée de la même manière que les pages standards de modification, car les mêmes risques s'appliquent
-      \item Les fonctions privilégiées doivent vérifier les privilèges de l’utilisateur.
-    \end{itemize}
-  \end{exampleblock}
+  \begin{columns}[T]
+    \column{.45\textwidth}
+      \begin{alertblock}{Attaque}
+        \begin{itemize}
+          \item Analyse des requêtes faites par le navigateur
+          \item Test des URLs standards
+          \item Test les ressources devinables
+        \end{itemize}
+      \end{alertblock}
+    \column{.45\textwidth}
+      \begin{exampleblock}{Sécurisation}
+        \begin{itemize}
+          \item L'API doit être sécurisée de la même manière que les pages standards de modification, car les mêmes risques s'appliquent
+          \item Les fonctions privilégiées doivent vérifier les privilèges de l’utilisateur.
+        \end{itemize}
+      \end{exampleblock}
+  \end{columns}
 \end{frame}
 
 \subsection{Contrôle basées sur les identifiants}
 \begin{frame}
   \frametitle{Contrôle basées sur les identifiants}
   Certains sites permettent l'accès à des fonctionnalités en fonction de l'ID d'une ressource (statique ou dynamique).
+  \vspace{2em}
   \begin{itemize}
     \item Les IDs peuvent être devinés.
     \item Les GUID n'améliorent que peu la sécurité (prévisibles).
@@ -175,57 +227,69 @@
 \end{frame}
 \begin{frame}
   \frametitle{Contrôles basés sur les identifiants}
-  \begin{alertblock}{Attaque}
-    \begin{itemize}
-      \item Deviner les identifiants
-      \item Les identifiants sont les mêmes quelle que soit l’action
-      \item Accès à une ressource connue avec un compte moins privilégié (et même sans s'identifier)
-    \end{itemize}
-  \end{alertblock}
-  \begin{exampleblock}{Sécurisation}
-    \begin{itemize}
-      \item Vérifier les droits d'accès à la ressource de l'utilisateur.
-      \item Vérifier que l'utilisateur a le droit de faire l'action demandée
-    \end{itemize}
-  \end{exampleblock}
+  \begin{columns}[T]
+    \column{.45\textwidth}
+      \begin{alertblock}{Attaque}
+        \begin{itemize}
+          \item Deviner les identifiants
+          \item Les identifiants sont les mêmes quelle que soit l’action
+          \item Accès à une ressource connue avec un compte moins privilégié (et même sans s'identifier)
+        \end{itemize}
+      \end{alertblock}
+    \column{.45\textwidth}
+      \begin{exampleblock}{Sécurisation}
+        \begin{itemize}
+          \item Vérifier les droits d'accès à la ressource de l'utilisateur.
+          \item Vérifier que l'utilisateur a le droit de faire l'action demandée
+        \end{itemize}
+      \end{exampleblock}
+  \end{columns}
 \end{frame}
-\subsection{Mauvaise configuration de la plateforme}
+\subsection{Contrôle basé sur la requête}
 \begin{frame}
-  \frametitle{Contrôle externe à l'application}
-  \begin{itemize}
-    \item Les contrôles d'accès peuvent ne pas être effectués par l'application mais par l'infrastructure (par ex. Apache)
-    \item Apache peut valider une requête avec les critères suivants
-    \begin{itemize}
-      \item L'URL demandée (/admin, /image, ...)
-      \item Le type de fichier demandé
-      \item La méthode HTTP utilisée (GET, POST, ...)
-      \item Les identifiants de l'utilisateur
-      \item Les cookies (admin=true)
-    \end{itemize}
-  \end{itemize}
-  \begin{block}{Methode HTTP particulière}
-    Une requête HEAD doit renvoyer les mêmes en-têtes que GET, mais sans le corps du message. Pour cela, les mêmes scripts que pour GET sont généralement executés.
-  \end{block}
-  \begin{block}{Methode HTTP non-standard}
-    Les requêtes HTTP non-standards (DELETE, TOTO, ...) peuvent également être traitées par les mêmes scripts.
-  \end{block}
+  \frametitle{Contrôle basé sur la requête}
+  \begin{columns}[c]
+    \column{.45\textwidth}
+      \begin{itemize}
+        \item Les contrôles d'accès peuvent ne pas être effectués par l'application mais par l'infrastructure (par ex. Apache)
+        \item Apache peut valider une requête avec les critères suivants
+        \begin{itemize}
+          \item L'URL demandée (\texttt{/admin}, \texttt{/image})
+          \item Le type de fichier demandé
+          \item La méthode HTTP utilisée (\texttt{GET}, \texttt{POST}, \texttt{HEAD}, ...)
+          \item Les identifiants de l'utilisateur
+          \item Les cookies (admin=true)
+        \end{itemize}
+      \end{itemize}
+    \column{.45\textwidth}
+      \begin{block}{Methode HTTP particulière}
+        Une requête \texttt{HEAD} doit renvoyer les mêmes en-têtes que \texttt{GET}, mais sans le corps du message. Pour cela, les mêmes scripts que pour GET sont généralement executés.
+      \end{block}
+      \begin{block}{Methode HTTP non-standard}
+        Les requêtes HTTP non-standards (\texttt{DELETE}, \texttt{TOTO}, ...) peuvent également être traitées par les mêmes scripts.
+      \end{block}
+  \end{columns}
 \end{frame}
 \begin{frame}
-  \frametitle{Contrôle externe à l'application}
-  \begin{alertblock}{Attaque}
-    \begin{itemize}
-      \item Est-ce qu'une requête HEAD fonctionne?
-      \item Est-ce qu'une méthode HTTP non-valide fonctionne?
-      \item Est-ce que les privilèges sont les mêmes que pour l'application?
-      \item Ce type de contrôle peut également être mis en place pour les pages dynamiques du site.
-    \end{itemize}
-  \end{alertblock}
-  \begin{exampleblock}{Sécurisation}
-    \begin{itemize}
-      \item Faire attention lors de la configuration
-      \item Passer par un script qui renvoie le fichier après authentification (le fichier original étant innacessible en HTTP)
-    \end{itemize}
-  \end{exampleblock}
+  \frametitle{Contrôle basé sur la requête}
+  \begin{columns}[T]
+    \column{.45\textwidth}
+      \begin{alertblock}{Attaque}
+        \begin{itemize}
+          \item Est-ce qu'une requête HEAD fonctionne?
+          \item Est-ce qu'une méthode HTTP non-valide fonctionne?
+          \item Est-ce que les privilèges sont les mêmes que pour l'application?
+          \item Ce type de contrôle peut également être mis en place pour les pages dynamiques du site.
+        \end{itemize}
+      \end{alertblock}
+    \column{.45\textwidth}
+      \begin{exampleblock}{Sécurisation}
+        \begin{itemize}
+          \item Faire attention lors de la configuration
+          \item Passer par un script qui renvoie le fichier après authentification (le fichier original étant innacessible en HTTP)
+        \end{itemize}
+      \end{exampleblock}
+  \end{columns}
 \end{frame}
 
 \subsection{Fonctions en plusieurs étapes}
@@ -246,20 +310,24 @@
     \item Contrôles d'accès à chaque étape.
     \item Vérification de toutes les étapes précedentes à chaque fois.
   \end{itemize}
-  \begin{alertblock}{Attaque}
-    \begin{itemize}
-      \item Validation finale directe
-      \item Bypass d'une étape
-      \item Modification du header \texttt{REFERER}
-    \end{itemize}
-  \end{alertblock}
-  \begin{exampleblock}{Sécurisation}
-    \begin{itemize}
-      \item Ne pas faire confiance aux utilisateurs pour utiliser les fonctionnalités comme elles ont été prévues
-      \item Tout revérifier à chaque étape
-      \item Le header \texttt{REFERER} doit être considéré comme non-sécurisé
-    \end{itemize}
-  \end{exampleblock}
+  \begin{columns}[T]
+    \column{.45\textwidth}
+      \begin{alertblock}{Attaque}
+        \begin{itemize}
+          \item Validation finale directe
+          \item Bypass d'une étape
+          \item Modification du header \texttt{REFERER}
+        \end{itemize}
+      \end{alertblock}
+    \column{.45\textwidth}
+      \begin{exampleblock}{Sécurisation}
+        \begin{itemize}
+          \item Ne pas faire confiance aux utilisateurs pour utiliser les fonctionnalités comme elles ont été prévues
+          \item Tout revérifier à chaque étape
+          \item Le header \texttt{REFERER} doit être considéré comme non-sécurisé
+        \end{itemize}
+      \end{exampleblock}
+  \end{columns}
   
   %En cas de paiement par exemple, il vaut mieux revérifier toutes les informations lors de la dernière étape, il ne suffit pas de transmettre en champs cachés les informations, car elles peuvent être interceptées et modifiées par un attaquant.
 \end{frame}
@@ -276,7 +344,9 @@
     \item un paramètre de la requête
     \item une information dans l'URL
   \end{itemize}
+  \vspace*{1em}
   Ces techniques ne sont pas sécurisées car un attaquant peut modifier ces champs et usurper l'identité de l'administrateur.
+  \vspace*{1em}
   \begin{exampleblock}{Sécurisation}
     \begin{itemize}
       \item Ne pas faire confiance aux paramètres envoyés par les utilisateurs
@@ -287,18 +357,21 @@
 
 \begin{frame}
   \frametitle{Contrôles d'accès basés sur la géolocalisation}
-  Un utilisateur peut modifier sa géolocalisation perçue par le serveur.
-  \begin{itemize}
-    \item VPN
-    \item Proxy web
-    \item En-tête HTTP X-Forwarded-For
-%    \item Connexion externe à l'entreprise
-  \end{itemize}
-  \begin{exampleblock}{Sécurisation}
-    \begin{itemize}
-      \item Ne pas partir du principe que la localisation est juste
-    \end{itemize}
-  \end{exampleblock}
+  \begin{columns}[T]
+    \column{.45\textwidth}
+      Un utilisateur peut modifier sa géolocalisation perçue par le serveur
+      \begin{itemize}
+        \item VPN
+        \item Proxy web
+        \item En-tête HTTP X-Forwarded-For
+      \end{itemize}
+    \column{.45\textwidth}
+      \begin{exampleblock}{Sécurisation}
+        \begin{itemize}
+          \item Ne pas partir du principe que la localisation est juste
+        \end{itemize}
+      \end{exampleblock}
+  \end{columns}
 \end{frame}
 
 \subsection{Attaque avec différents comptes}
@@ -324,6 +397,7 @@
       \item Ne pas laisser des fonctionnalités non utilisées
     \end{itemize}
   \end{exampleblock}
+  \pause
   \begin{exampleblock}{}
     \begin{itemize}
       \item Ne pas faire confiance aux utilisateurs pour utiliser les fonctionnalités comme elles ont été prévues
@@ -331,11 +405,13 @@
       \item Il ne faut faire confiance qu'aux données provenant du côté serveur, et non du côté client. Il faut revalider les identifiants à chaque transmission de données
     \end{itemize}
   \end{exampleblock}
+  \pause
   \begin{exampleblock}{}
     \begin{itemize}
       \item Evaluer et documenter les contrôles d'accès pour chaque partie de l'application (pour les fonctionnalités et les ressources)
     \end{itemize}
   \end{exampleblock}
+  \pause
   \begin{exampleblock}{}
     \begin{itemize}
       \item Toutes les décisions d'autorisation doivent être prises à partir de la session de l'utilisateur
@@ -357,11 +433,13 @@
       \end{itemize}
     \end{itemize}
   \end{exampleblock}
+  \pause
   \begin{exampleblock}{}
     \begin{itemize}
       \item Utiliser des techniques de programmation pour forcer le contrôle d'accès à être effectué et éviter que le développeur passe outre
     \end{itemize}
   \end{exampleblock}
+  \pause
   \begin{exampleblock}{}
     \begin{itemize}
       \item Pour les parties sensibles de l'application, effectuer des contrôles supplémentaires, par exemple basés sur l'adresse IP
@@ -379,12 +457,13 @@
       \end{itemize}
     \end{itemize}
   \end{exampleblock}
-  
+  \pause
   \begin{alertblock}{}
     \begin{itemize}
       \item Pour des actions critiques, il faut ré-authentifier l'utilisateur à chaque transaction et utiliser un système d'authentification multi-facteurs
     \end{itemize}
   \end{alertblock}
+  \pause
   \begin{exampleblock}{}
     \begin{itemize}
       \item Logger toutes les actions effectuées quand des données sensibles sont concernées
@@ -421,16 +500,19 @@
       \item une matrice de droits est stockée dans la base de données 
       \item le programme se charge d'appliquer les contrôles (avec un algorithme aussi complexe que nécessaire)
     \end{itemize}
+    \pause
     \item A la discrétion de l'administrateur (discretionary access control DAC)
     \begin{itemize}
       \item l'administrateur peut donner explicitement des privilèges à d'autres utilisateurs pour des ressources auxquelles ils ont accès
       \item modèle fermé : white list
       \item modèle ouvert : black list
     \end{itemize}
+    \pause
     \item Basés sur des rôles (role-based access control RBAC)
     \begin{itemize}
       \item chaque rôle donne accès à certains privilèges, pas trop de rôles, ni trop peu, il faut que cela reste gérable et sécurisé
     \end{itemize}
+    \pause
     \item Via un composant externe
     \begin{itemize}
       \item utilisation d'un compte de base de données différent pour les groupes d'utilisateurs afin de limiter leurs droits
