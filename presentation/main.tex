@@ -119,7 +119,7 @@
     \column{.45\textwidth}
       \begin{description}
         \item[Vulnérabilité] \hfill \\ Accéder aux ressources d'autres utilisateurs du même niveau.
-        \item[Type d'attaque] \hfill \\ Escalade de privilèges horizontale --- \emph{horizontal privilege esalation}
+        \item[Type d'attaque] \hfill \\ Escalade de privilèges horizontale --- \emph{horizontal privilege escalation}
       \end{description}
       \begin{block}{Exemple d'attaque}
         Un utilisateur lambda peut lire les emails d'un autre utilisateur lambda
@@ -215,19 +215,22 @@
   \end{columns}
 \end{frame}
 
-\subsection{Contrôle basées sur les identifiants}
+\subsection{Contrôle basé sur les identifiants}
 \begin{frame}
-  \frametitle{Contrôle basées sur les identifiants}
+  \frametitle{Contrôle basé sur les identifiants}
   Certains sites permettent l'accès à des fonctionnalités en fonction de l'ID d'une ressource (statique ou dynamique).
   \vspace{2em}
   \begin{itemize}
     \item Les IDs peuvent être devinés.
-    \item Les GUID n'améliorent que peu la sécurité (prévisibles).
-    \item Les ID peuvent être affichés ailleurs.
+    \item Les GUIDs n'améliorent que peu la sécurité (prévisibles).
+    \begin{itemize}
+      \item \texttt{3F2504E0-4F89-11D3-9A0C-0305E82C3301}
+    \end{itemize}
+    \item Les IDs peuvent être affichés ailleurs.
   \end{itemize}
 \end{frame}
 \begin{frame}
-  \frametitle{Contrôles basés sur les identifiants}
+  \frametitle{Contrôle basé sur les identifiants}
   \begin{columns}[T]
     \column{.45\textwidth}
       \begin{alertblock}{Attaque}
@@ -279,7 +282,7 @@
         \begin{itemize}
           \item Est-ce qu'une requête HEAD fonctionne?
           \item Est-ce qu'une méthode HTTP non-valide fonctionne?
-          \item Est-ce que les privilèges sont les mêmes que pour l'application?
+          \item Est-ce que les privilèges sont contrôle de manière identique pour l'API que pour l'application?
           \item Ce type de contrôle peut également être mis en place pour les pages dynamiques du site.
         \end{itemize}
       \end{alertblock}
@@ -287,7 +290,7 @@
       \begin{exampleblock}{Sécurisation}
         \begin{itemize}
           \item Faire attention lors de la configuration
-          \item Passer par un script qui renvoie le fichier après authentification (le fichier original étant innacessible en HTTP)
+          \item Pour les fichiers statiques: passer par un script qui renvoie le fichier après authentification (le fichier original étant innacessible en HTTP)
         \end{itemize}
       \end{exampleblock}
   \end{columns}
@@ -384,8 +387,8 @@
   \frametitle{Comparer différents comptes}
   \begin{alertblock}{Attaque}
     \begin{itemize}
-      \item Tester les URLs obtenues à partir d'un compte privilégié avec un compte moins privilégié.
-      \item Cartographier le site avec un logiciel comme Burp, pour détecter des URLs non-affichées.
+      \item Cartographier le site avec un logiciel comme Burp, pour détecter des URLs
+      \item Tester les URLs obtenues à partir d'un compte privilégié avec un compte moins privilégié
       \item Il faut potentiellement compléter les outils automatiques avec nos connaissances
     \end{itemize}
   \end{alertblock}
@@ -456,8 +459,8 @@
     \begin{itemize}
       \item Accès à des fichiers statiques : 
       \begin{itemize}
-        \item - Accès indirect en passant un nom de fichier à une page dynamique côté serveur qui va implémenter un contrôle d'accès et retourner le fichier (pas rediriger dessus, car cela ne mettrait en place aucun contrôle)
-        \item - Utiliser l'authentification HTTP et d'autres fonctionnalités du serveur d'application pour contrôler l'authentification (cela risque de faire une vérification différente de celle du composant central, il faut donc s'assurer que cela soit consistant)
+        \item Accès indirect en passant un nom de fichier à une page dynamique côté serveur qui va implémenter un contrôle d'accès et retourner le fichier (pas rediriger dessus, car cela ne mettrait en place aucun contrôle)
+        \item Utiliser l'authentification HTTP et d'autres fonctionnalités du serveur d'application pour contrôler l'authentification (cela risque de faire une vérification différente de celle du composant central, \textbf{il faut donc s'assurer que cela soit consistant})
       \end{itemize}
     \end{itemize}
   \end{exampleblock}
@@ -522,6 +525,14 @@
       \item utilisation d'un compte de base de données différent pour les groupes d'utilisateurs afin de limiter leurs droits
     \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+  \begin{center}
+    \Huge Merci de votre attention
+    \\~\\
+    \LARGE Ne faites pas confiance aux données en provenance du navigateur !
+  \end{center}
 \end{frame}
 
 \end{document}
