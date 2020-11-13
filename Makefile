@@ -1,5 +1,8 @@
 
 
-all:
+all: pdf img
+
+pdf:
 	cd presentation/ && latexmk -pdf
-	cd presentation/ && convert -density 1000 -scale 1920x1080 main.pdf main.jpg
+img:
+	cd presentation/ && convert -density 300 -scale 1920x1080 main.pdf main.jpg
