@@ -1,0 +1,43 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="audio-25.3_data" version="1.3.0" audacityversion="2.4.2" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="119.8416506718" rate="48000.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags/>
+	<wavetrack name="audio-25.3" isSelected="1" height="150" minimized="0" channel="0" linked="1" mute="0" solo="0" rate="48000" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="500260">
+				<waveblock start="0">
+					<simpleblockfile filename="eff1fe4a.au" len="228900" min="-0.532611" max="0.339544" rms="0.047868"/>
+				</waveblock>
+				<waveblock start="228900">
+					<simpleblockfile filename="eff1f04c.au" len="262144" min="-0.34901" max="0.27969" rms="0.038539"/>
+				</waveblock>
+				<waveblock start="491044">
+					<simpleblockfile filename="eff1fd6d.au" len="9216" min="-0.011382" max="0.010782" rms="0.003037"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="2">
+				<controlpoint t="9.504208208208" val="1.021126747131"/>
+				<controlpoint t="10.413741741742" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="audio-25.3" isSelected="1" height="150" minimized="0" channel="1" linked="0" mute="0" solo="0" rate="48000" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="500260">
+				<waveblock start="0">
+					<simpleblockfile filename="eff1f9b0.au" len="228900" min="-0.532611" max="0.339544" rms="0.047868"/>
+				</waveblock>
+				<waveblock start="228900">
+					<simpleblockfile filename="eff1f72a.au" len="262144" min="-0.34901" max="0.27969" rms="0.038539"/>
+				</waveblock>
+				<waveblock start="491044">
+					<simpleblockfile filename="eff1fc35.au" len="9216" min="-0.011382" max="0.010782" rms="0.003037"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="2">
+				<controlpoint t="9.504208208208" val="1.021126747131"/>
+				<controlpoint t="10.413741741742" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+</project>

@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="audio-25.2_data" version="1.3.0" audacityversion="2.4.2" sel0="9.1477333333" sel1="9.1477333333" vpos="0" h="7.4274133333" zoom="91.5527343750" rate="48000.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags/>
+	<wavetrack name="audio-25.2" isSelected="1" height="150" minimized="0" channel="0" linked="1" mute="0" solo="0" rate="48000" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="507904">
+				<waveblock start="0">
+					<simpleblockfile filename="eff1fa7d.au" len="262144" min="-0.503409" max="0.301847" rms="0.039252"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="eff1f557.au" len="245760" min="-0.233841" max="0.171516" rms="0.037617"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="2">
+				<controlpoint t="9.879552000000" val="0.992957770824"/>
+				<controlpoint t="10.581333333333" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="audio-25.2" isSelected="1" height="150" minimized="0" channel="1" linked="0" mute="0" solo="0" rate="48000" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="507904">
+				<waveblock start="0">
+					<simpleblockfile filename="eff1fbc9.au" len="262144" min="-0.503409" max="0.301847" rms="0.039252"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="eff1f47e.au" len="245760" min="-0.233841" max="0.171511" rms="0.037617"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="2">
+				<controlpoint t="9.879552000000" val="0.992957770824"/>
+				<controlpoint t="10.581333333333" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+</project>
