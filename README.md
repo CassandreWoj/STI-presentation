@@ -4,6 +4,8 @@ Auteurs : Gwendoline Dössegger && Gabriel Roch && Cassandre Wojciechowski
 
 Date de présentation : vendredi 20 novembre
 
+Vidéo : https://youtu.be/ppqQWKoU_9E
+
 #### Sujet : **Attacking access controls**
 
 
